@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
@@ -15,7 +14,7 @@ import AddScreen from "./main/AddScreen";
 import ProfileScreen from "./main/ProfileScreen";
 const MainScreen = ({ fetchUser }) => {
   useEffect(() => {
-    fetchUser();
+    // fetchUser();
   }, []);
 
   return (

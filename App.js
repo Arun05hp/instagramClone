@@ -21,6 +21,7 @@ import LandingScreen from "./components/auth/LandingScreen";
 import RegisterScreen from "./components/auth/RegisterScreen";
 import MainScreen from "./components/MainScreen";
 import AddScreen from "./components/main/AddScreen";
+import SaveScreen from "./components/main/SaveScreen";
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ export default function App() {
   });
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
+      console.log(user);
       if (!user) {
         setCheckUser({
           loaded: true,
@@ -53,7 +55,7 @@ export default function App() {
     );
   }
 
-  if (!checkUser.loaded) {
+  if (!checkUser.loggedIn) {
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Landing">
@@ -79,6 +81,7 @@ export default function App() {
           />
 
           <Stack.Screen name="Add" component={AddScreen} />
+          <Stack.Screen name="Save" component={SaveScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
