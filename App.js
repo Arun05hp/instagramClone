@@ -22,6 +22,7 @@ import RegisterScreen from "./components/auth/RegisterScreen";
 import MainScreen from "./components/MainScreen";
 import AddScreen from "./components/main/AddScreen";
 import SaveScreen from "./components/main/SaveScreen";
+import LoginScreen from "./components/auth/LoginScreen";
 
 const Stack = createStackNavigator();
 
@@ -32,7 +33,7 @@ export default function App() {
   });
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log(user);
+      console.log("user", user);
       if (!user) {
         setCheckUser({
           loaded: true,
@@ -65,6 +66,7 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -77,7 +79,7 @@ export default function App() {
           <Stack.Screen
             name="Main"
             component={MainScreen}
-            options={{ headerShown: false }}
+            // options={{ headerShown: false }}
           />
 
           <Stack.Screen name="Add" component={AddScreen} />

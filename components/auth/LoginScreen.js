@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, TextInput, Button } from "react-native";
 import firebase from "firebase";
 const LoginScreen = () => {
   const [userInfo, setUserInfo] = useState({

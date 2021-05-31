@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import firebase from "firebase";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
@@ -8,13 +9,14 @@ const EmptyScreen = () => null;
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser } from "../redux/actions";
+import { fetchUser, fetchUserPosts } from "../redux/actions";
 import FeedScreen from "./main/FeedScreen";
-import AddScreen from "./main/AddScreen";
 import ProfileScreen from "./main/ProfileScreen";
-const MainScreen = ({ fetchUser }) => {
+import SearchScreen from "./main/SearchScreen";
+const MainScreen = ({ fetchUser, fetchUserPosts }) => {
   useEffect(() => {
-    // fetchUser();
+    fetchUser();
+    fetchUserPosts();
   }, []);
 
   return (
@@ -25,6 +27,15 @@ const MainScreen = ({ fetchUser }) => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="magnify" color={color} size={26} />
           ),
         }}
       />
@@ -45,6 +56,14 @@ const MainScreen = ({ fetchUser }) => {
       />
       <Tab.Screen
         name="Profile"
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            event.preventDefault();
+            navigation.navigate("Profile", {
+              uid: firebase.auth().currentUser.uid,
+            });
+          },
+        })}
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -63,6 +82,6 @@ const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
 });
 const mapDispatchProps = (dispatch) =>
-  bindActionCreators({ fetchUser }, dispatch);
+  bindActionCreators({ fetchUser, fetchUserPosts }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchProps)(MainScreen);
