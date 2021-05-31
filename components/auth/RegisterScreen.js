@@ -13,6 +13,14 @@ const RegisterScreen = () => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((res) => {
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .set({
+            name,
+            email,
+          });
         console.log(res);
       })
       .catch((err) => {
