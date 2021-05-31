@@ -1,21 +1,49 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from "react";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import firebase from "firebase";
+import firebaseConfig from "./firebaseConfig";
+if (firebase.apps.length === 0) {
+  firebase.initializeApp(firebaseConfig);
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import LandingScreen from "./components/auth/LandingScreen";
+import RegisterScreen from "./components/auth/RegisterScreen";
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  const [checkUser, setCheckUser] = useState({
+    loaded: false,
+    loggedIn: false,
+  });
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        setCheckUser({
+          loaded: true,
+          loggedIn: false,
+        });
+      } else {
+        setCheckUser({
+          loaded: true,
+          loggedIn: true,
+        });
+      }
+    });
+  }, []);
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Landing">
+        <Stack.Screen
+          name="Landing"
+          component={LandingScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
