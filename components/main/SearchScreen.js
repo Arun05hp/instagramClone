@@ -37,9 +37,7 @@ const SearchScreen = ({ navigation }) => {
         data={users}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() =>
-              NavigationPreloadManager.navigate("Profile", { uid: item.id })
-            }
+            onPress={() => navigation.navigate("Profile", { uid: item.id })}
           >
             <Text>{item.name}</Text>
           </TouchableOpacity>

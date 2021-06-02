@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, StyleSheet } from "react-native";
+import { Button, View, Text, Image, FlatList, StyleSheet } from "react-native";
 import firebase from "firebase";
 import { connect } from "react-redux";
-const ProfileScreen = ({ currentUser, posts, route }) => {
+const ProfileScreen = ({ currentUser, posts, following, route }) => {
   const [userPosts, setuserPosts] = useState([]);
   const [user, setUser] = useState(null);
+  const [userfollowing, setUserFollowing] = useState(false);
 
   useEffect(() => {
     if (route.params.uid === firebase.auth().currentUser.uid) {
@@ -40,7 +41,33 @@ const ProfileScreen = ({ currentUser, posts, route }) => {
           setuserPosts(posts);
         });
     }
-  }, [route.params.uid]);
+    console.log(following);
+    if (following.indexOf(route.params.uid) > -1) {
+      setUserFollowing(true);
+    } else {
+      setUserFollowing(false);
+    }
+  }, [route.params.uid, following]);
+
+  const onFollow = () => {
+    firebase
+      .firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .doc(route.params.uid)
+      .set({});
+  };
+
+  const onUnFollow = () => {
+    firebase
+      .firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .doc(route.params.uid)
+      .delete();
+  };
 
   if (user === null) return <View />;
   return (
@@ -48,6 +75,15 @@ const ProfileScreen = ({ currentUser, posts, route }) => {
       <View style={styles.containerInfo}>
         <Text>{user.name}</Text>
         <Text>{user.email}</Text>
+        {route.params.uid !== firebase.auth().currentUser.uid ? (
+          <View>
+            {userfollowing ? (
+              <Button title="Following" onPress={() => onUnFollow()} />
+            ) : (
+              <Button title="Follow" onPress={() => onFollow()} />
+            )}
+          </View>
+        ) : null}
       </View>
       <View style={styles.containerGallery}>
         <FlatList
@@ -88,6 +124,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
   posts: store.userState.posts,
+  following: store.userState.following,
 });
 
 export default connect(mapStateToProps, null)(ProfileScreen);

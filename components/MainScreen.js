@@ -9,14 +9,19 @@ const EmptyScreen = () => null;
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser, fetchUserPosts } from "../redux/actions";
+import {
+  fetchUser,
+  fetchUserPosts,
+  fetchUserFollowing,
+} from "../redux/actions";
 import FeedScreen from "./main/FeedScreen";
 import ProfileScreen from "./main/ProfileScreen";
 import SearchScreen from "./main/SearchScreen";
-const MainScreen = ({ fetchUser, fetchUserPosts }) => {
+const MainScreen = ({ fetchUser, fetchUserPosts, fetchUserFollowing }) => {
   useEffect(() => {
     fetchUser();
     fetchUserPosts();
+    fetchUserFollowing();
   }, []);
 
   return (
@@ -82,6 +87,9 @@ const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
 });
 const mapDispatchProps = (dispatch) =>
-  bindActionCreators({ fetchUser, fetchUserPosts }, dispatch);
+  bindActionCreators(
+    { fetchUser, fetchUserPosts, fetchUserFollowing },
+    dispatch
+  );
 
 export default connect(mapStateToProps, mapDispatchProps)(MainScreen);
