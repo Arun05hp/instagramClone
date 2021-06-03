@@ -1,4 +1,8 @@
-import { USERS_POST_STATE_CHANGE, USERS_DATA_STATE_CHANGE } from "../constants";
+import {
+  USERS_POST_STATE_CHANGE,
+  USERS_DATA_STATE_CHANGE,
+  CLEAR_DATA,
+} from "../constants";
 
 const initialState = {
   users: [],
@@ -22,6 +26,8 @@ export const users = (state = initialState, action) => {
           user.uid === action.uid ? { ...user, posts: action.posts } : user
         ),
       };
+    case CLEAR_DATA:
+      return initialState;
 
     default:
       return state;

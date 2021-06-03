@@ -68,6 +68,9 @@ const ProfileScreen = ({ currentUser, posts, following, route }) => {
       .doc(route.params.uid)
       .delete();
   };
+  const onLogout = () => {
+    firebase.auth().signOut();
+  };
 
   if (user === null) return <View />;
   return (
@@ -83,7 +86,9 @@ const ProfileScreen = ({ currentUser, posts, following, route }) => {
               <Button title="Follow" onPress={() => onFollow()} />
             )}
           </View>
-        ) : null}
+        ) : (
+          <Button title="Logout" onPress={() => onLogout()} />
+        )}
       </View>
       <View style={styles.containerGallery}>
         <FlatList
