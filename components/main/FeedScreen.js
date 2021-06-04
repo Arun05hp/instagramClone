@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Button, View, Text, Image, FlatList, StyleSheet } from "react-native";
-import firebase from "firebase";
+import { View, Text, Image, FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
-const FeedScreen = ({ currentUser, users, userLoaded, following, route }) => {
+const FeedScreen = ({
+  currentUser,
+  users,
+  userFollowingLoaded,
+  following,
+  route,
+  navigation,
+}) => {
   const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState(null);
-  const [userfollowing, setUserFollowing] = useState(false);
 
   useEffect(() => {
     let posts = [];
-    if (userLoaded === following.length) {
+    if (userFollowingLoaded === following.length) {
       for (let i = 0; i < following.length; i++) {
         const user = users.find((el) => el.uid === following[i]);
 
@@ -23,7 +27,7 @@ const FeedScreen = ({ currentUser, users, userLoaded, following, route }) => {
       console.log(posts);
       setPosts(posts);
     }
-  }, [userLoaded]);
+  }, [userFollowingLoaded]);
 
   return (
     <View style={styles.container}>
@@ -36,6 +40,16 @@ const FeedScreen = ({ currentUser, users, userLoaded, following, route }) => {
             <View style={styles.containerImage}>
               <Text style={styles.container}>{item.user.name}</Text>
               <Image style={styles.image} source={{ uri: item.downloadURL }} />
+              <Text
+                onPress={() =>
+                  navigation.navigate("Comment", {
+                    postId: item.id,
+                    uid: item.user.uid,
+                  })
+                }
+              >
+                View Comments...
+              </Text>
             </View>
           )}
         />
@@ -67,7 +81,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
   users: store.usersState.users,
-  userLoaded: store.usersState.userLoaded,
+  userFollowingLoaded: store.usersState.userFollowingLoaded,
   following: store.userState.following,
 });
 

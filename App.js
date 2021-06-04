@@ -23,6 +23,7 @@ import MainScreen from "./components/MainScreen";
 import AddScreen from "./components/main/AddScreen";
 import SaveScreen from "./components/main/SaveScreen";
 import LoginScreen from "./components/auth/LoginScreen";
+import CommentScreen from "./components/main/CommentScreen";
 
 const Stack = createStackNavigator();
 
@@ -76,12 +77,8 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen
-            name="Main"
-            component={MainScreen}
-            // options={{ headerShown: false }}
-          />
-
+          <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Comment" component={CommentScreen} />
           <Stack.Screen name="Add" component={AddScreen} />
           <Stack.Screen name="Save" component={SaveScreen} />
         </Stack.Navigator>
