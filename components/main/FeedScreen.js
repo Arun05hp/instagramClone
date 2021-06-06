@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, StyleSheet } from "react-native";
+import { Button, View, Text, Image, FlatList, StyleSheet } from "react-native";
+import firebase from "firebase";
 import { connect } from "react-redux";
 const FeedScreen = ({
   currentUser,
-  users,
   userFollowingLoaded,
+  feed,
   following,
   route,
   navigation,
@@ -12,23 +13,40 @@ const FeedScreen = ({
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    let posts = [];
-    if (userFollowingLoaded === following.length) {
-      for (let i = 0; i < following.length; i++) {
-        const user = users.find((el) => el.uid === following[i]);
-
-        if (user != undefined) {
-          posts = [...posts, ...user.posts];
-        }
-      }
-      posts.sort((x, y) => {
+    if (userFollowingLoaded === following.length && following.length !== 0) {
+      feed.sort((x, y) => {
         return x.creation - y.creation;
       });
-      console.log(posts);
-      setPosts(posts);
-    }
-  }, [userFollowingLoaded]);
 
+      setPosts(feed);
+      console.log("feed", feed);
+    }
+  }, [userFollowingLoaded, feed]);
+
+  const onLike = (userId, postId) => {
+    firebase
+      .firestore()
+      .collection("posts")
+      .doc(userId)
+      .collection("userPosts")
+      .doc(postId)
+      .collection("likes")
+      .doc(firebase.auth().currentUser.uid)
+      .set({});
+  };
+
+  const onDislike = (userId, postId) => {
+    firebase
+      .firestore()
+      .collection("posts")
+      .doc(userId)
+      .collection("userPosts")
+      .doc(postId)
+      .collection("likes")
+      .doc(firebase.auth().currentUser.uid)
+      .delete();
+  };
+  console.log(posts);
   return (
     <View style={styles.container}>
       <View style={styles.containerGallery}>
@@ -40,6 +58,18 @@ const FeedScreen = ({
             <View style={styles.containerImage}>
               <Text style={styles.container}>{item.user.name}</Text>
               <Image style={styles.image} source={{ uri: item.downloadURL }} />
+
+              {item.currentUserLike ? (
+                <Button
+                  title="Dislike"
+                  onPress={() => onDislike(item.user.uid, item.id)}
+                />
+              ) : (
+                <Button
+                  title="Like"
+                  onPress={() => onLike(item.user.uid, item.id)}
+                />
+              )}
               <Text
                 onPress={() =>
                   navigation.navigate("Comment", {
@@ -61,7 +91,6 @@ const FeedScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 40,
   },
   containerInfo: {
     margin: 20,
@@ -70,17 +99,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    flex: 1,
-    aspectRatio: 1 / 1,
+    width: "100%",
+    height: 300,
   },
   containerImage: {
-    flex: 1 / 3,
+    flex: 1,
   },
 });
 
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
-  users: store.usersState.users,
+  feed: store.usersState.feed,
   userFollowingLoaded: store.usersState.userFollowingLoaded,
   following: store.userState.following,
 });

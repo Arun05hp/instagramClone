@@ -4,10 +4,10 @@ import firebase from "firebase";
 require("firebase/firestore");
 
 import { connect } from "react-redux";
-import { bindActionCreator } from "redux";
-import { fetchUserData } from "../../redux/actions";
+import { bindActionCreators } from "redux";
+import { fetchUsersData } from "../../redux/actions";
 
-const CommentScreen = ({ route, fetchUserData }) => {
+const CommentScreen = ({ route, fetchUserData, users }) => {
   const [comments, setComments] = useState([]);
   const [postId, setPostId] = useState("");
   const [text, setText] = useState("");
@@ -18,9 +18,9 @@ const CommentScreen = ({ route, fetchUserData }) => {
         if (comments[i].hasOwnProperty("user")) {
           continue;
         }
-        const user = user.find((x) => x.uid === comments[i].creator);
+        const user = users.find((x) => x.uid === comments[i].creator);
         if (user == undefined) {
-          fetchUserData(comments[i].creator, false);
+          fetchUsersData(comments[i].creator, false);
         } else {
           comments[i].user = user;
         }
@@ -47,8 +47,8 @@ const CommentScreen = ({ route, fetchUserData }) => {
             };
           });
           matchUserToComment(comments);
-          setPostId(route.params.postId);
         });
+      setPostId(route.params.postId);
     } else {
       matchUserToComment(comments);
     }
@@ -94,6 +94,6 @@ const mapStateToProps = (store) => ({
   users: store.usersState.users,
 });
 const mapDispatchProps = (dispatch) =>
-  bindActionCreators({ fetchUserData }, dispatch);
+  bindActionCreators({ fetchUsersData }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchProps)(CommentScreen);
